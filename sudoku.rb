@@ -155,6 +155,7 @@ class Sudoku
   def complete_puzzle
     incomplete=check_incomplete
     while incomplete>0
+
       start=incomplete
       solve_squares
       incomplete=check_incomplete
@@ -179,51 +180,57 @@ class Sudoku
 
 end
 
+
+class Guess_Puzzle < Sudoku
+  initialize 
+end
+
 =begin
-#easy
+#can solve
+puts 1
 puzzle = Sudoku.new('puzzle1.txt')
 puzzle.complete_puzzle
-
+puts 2
 puzzle = Sudoku.new('puzzle2.txt')
 puzzle.complete_puzzle
-
-#medium
+puts 3
 puzzle = Sudoku.new('puzzle3.txt')
 puzzle.complete_puzzle
-
+puts 4
 puzzle = Sudoku.new('puzzle4.txt')
+puzzle.complete_puzzle
+puts 10
+puzzle = Sudoku.new('puzzle10.txt')
+puzzle.complete_puzzle
+puts 11
+puzzle = Sudoku.new('puzzle11.txt')
 puzzle.complete_puzzle
 =end
 
-#hard
+
+=begin
+#can't solve
+puts 5
 puzzle = Sudoku.new('puzzle6.txt')
 puzzle.complete_puzzle
-
+puts 6
 puzzle = Sudoku.new('puzzle5.txt')
 puzzle.complete_puzzle
-
-#super hard
+puts 7
 puzzle = Sudoku.new('puzzle7.txt')
 puzzle.complete_puzzle
-
+puts 8
 puzzle = Sudoku.new('puzzle8.txt')
 puzzle.complete_puzzle
-
+puts 9
 puzzle = Sudoku.new('puzzle9.txt')
 puzzle.complete_puzzle
-
-#evil
-=begin
-puzzle = Sudoku.new('puzzle10.txt')
-puzzle.complete_puzzle
-
-puzzle = Sudoku.new('puzzle11.txt')
+puts 12
+puzzle = Sudoku.new('puzzle12.txt')
 puzzle.complete_puzzle
 =end
 
 puzzle = Sudoku.new('puzzle12.txt')
 puzzle.complete_puzzle
-
-
 
 # there are puzzles unsolvable by hand that now computer algorithms are being tested to solve. 
