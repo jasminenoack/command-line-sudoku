@@ -1,9 +1,16 @@
+require "byebug"
+
+
 class Sudoku
-  attr_accessor :puzzle, :rotated
+  attr_accessor :puzzle, :rotated, :guess, :guesses, :major_guesses, :incorrect
 
   def initialize(file)
     puzzle=File.open(file).read.split("\n")
     @puzzle=[]
+    @guess = false
+    @guesses = []
+    @major_guesses =[]
+    @incorrect=[]
     puzzle.each{|row| @puzzle << row.split("").map{|num| num=="0" ? "_" : num.to_i}}
   end
 
@@ -70,7 +77,10 @@ class Sudoku
     (0..8).each do |row|
       (0..8).each do |column|
         options=check_place(row, column)
-        @puzzle[row][column]=options[0] if options.class==Array && options.length==1
+        if options.class==Array && options.length==1
+          @puzzle[row][column]=options[0]
+          @guesses<<[row, column] if @guess
+        end
       end
     end
     self
@@ -105,6 +115,7 @@ class Sudoku
             row = places[index][0]
             column = places[index][1]
             @puzzle[row][column]=num
+            @guesses<< [row, column] if @guess
           end
         end
       end
@@ -155,7 +166,6 @@ class Sudoku
   def complete_puzzle
     incomplete=check_incomplete
     while incomplete>0
-
       start=incomplete
       solve_squares
       incomplete=check_incomplete
@@ -169,68 +179,158 @@ class Sudoku
         end
       end
     end
-    if incomplete > 0
-      puts "I'm unfortunately unable to solve this puzzle"
-      display
-    else
-      puts "I have solved the puzzle"
-      display
+  end
+
+  def guess_process
+    loop do
+      if solvable?
+        take_a_guess(pick_empty)
+        complete_puzzle
+        if check_incomplete==0
+          display
+          break
+        elsif solvable?
+          guess_process
+          break if check_incomplete==0
+        else
+          backtrack
+        end
+      end
+    end
+
+  end
+
+  def pick_empty
+    available_places.each do |place|
+      options=check_place(*place)
+      options.each do |set|
+        options.each do |num|
+          next if @incorrect.include?([*place,num])
+          return [*place, num]
+        end
+      end
+    end
+    nil
+  end
+
+
+  def take_a_guess(nums)
+    @guess=true
+    test_case=nums
+    @major_guesses<<test_case
+    @guesses<<["mg", @major_guesses.length-1]
+    @puzzle[test_case[0]][test_case[1]]=test_case[2]
+  end
+
+  def available_places
+    open_places=[]
+    (0..8).each do |row|
+      (0..8).each do |column|
+        if @puzzle[row][column]=="_"
+          open_places<<[row, column]
+        end
+      end
+    end
+    open_places
+  end
+
+  def solvable?
+    open_places=available_places
+    open_places.each do |place|
+      if check_place(*place).empty?
+        return false
+      end
+    end
+    true
+  end
+
+  def backtrack
+    loop do
+      break if @guesses.empty?
+      guess = @guesses.pop
+      if guess[0]=="mg" && guess[1]==0
+        guess = @major_guesses.pop
+        @incorrect << guess
+        @puzzle[guess[0]][guess[1]]="_"
+      elsif guess[0]=="mg"
+        guess=@major_guesses.pop
+        @puzzle[guess[0]][guess[1]]="_"
+      else
+        @puzzle[guess[0]][guess[1]]="_"
+      end
     end
   end
 
 end
 
 
-class Guess_Puzzle < Sudoku
-  initialize 
-end
 
-=begin
-#can solve
+
+
+
+
 puts 1
 puzzle = Sudoku.new('puzzle1.txt')
-puzzle.complete_puzzle
+puzzle.guess_process
 puts 2
 puzzle = Sudoku.new('puzzle2.txt')
-puzzle.complete_puzzle
+puzzle.guess_process
 puts 3
 puzzle = Sudoku.new('puzzle3.txt')
-puzzle.complete_puzzle
+puzzle.guess_process
 puts 4
 puzzle = Sudoku.new('puzzle4.txt')
-puzzle.complete_puzzle
-puts 10
-puzzle = Sudoku.new('puzzle10.txt')
-puzzle.complete_puzzle
-puts 11
-puzzle = Sudoku.new('puzzle11.txt')
-puzzle.complete_puzzle
-=end
-
-
-=begin
-#can't solve
+puzzle.guess_process
 puts 5
 puzzle = Sudoku.new('puzzle6.txt')
-puzzle.complete_puzzle
+puzzle.guess_process
 puts 6
 puzzle = Sudoku.new('puzzle5.txt')
-puzzle.complete_puzzle
+puzzle.guess_process
 puts 7
 puzzle = Sudoku.new('puzzle7.txt')
-puzzle.complete_puzzle
+puzzle.guess_process
 puts 8
 puzzle = Sudoku.new('puzzle8.txt')
-puzzle.complete_puzzle
+puzzle.guess_process
 puts 9
 puzzle = Sudoku.new('puzzle9.txt')
-puzzle.complete_puzzle
+puzzle.guess_process
+puts 10
+puzzle = Sudoku.new('puzzle10.txt')
+puzzle.guess_process
+puts 11
+puzzle = Sudoku.new('puzzle11.txt')
+puzzle.guess_process
 puts 12
 puzzle = Sudoku.new('puzzle12.txt')
-puzzle.complete_puzzle
-=end
+puzzle.guess_process
+puts 13
+puzzle = Sudoku.new('puzzle13.txt')
+puzzle.guess_process
 
-puzzle = Sudoku.new('puzzle12.txt')
-puzzle.complete_puzzle
 
-# there are puzzles unsolvable by hand that now computer algorithms are being tested to solve. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# there are puzzles unsolvable by hand that now computer algorithms are being tested to solve.
