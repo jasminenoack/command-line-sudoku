@@ -16,7 +16,7 @@ It uses an algorithm that solves a Sudoku problem in 3 steps.
 
 3. It takes a guess based on the possible options: 
 
-  -If the puzzle cannot be solved with any of these methods, the computer will make a guess to solve the puzzle. It will attempt to fill the first empty square with a number and will track all additions to the puzzle after that guess. If the puzzle becomes unsolvable it will use backtrack to remove all additions to the puzzle, list it's guess as incorrect and guess the next option for that space. It will continue this until it is able to solve the puzzle. 
+  - If the puzzle cannot be solved with any of these methods, the computer will make a guess to solve the puzzle. It will attempt to fill the first empty square with a number and will track all additions to the puzzle after that guess. If the puzzle becomes unsolvable it will use backtrack to remove all additions to the puzzle, list it's guess as incorrect and guess the next option for that space. It will continue this until it is able to solve the puzzle. 
 
 # running the script
 
