@@ -20,7 +20,7 @@ It uses an algorithm that solves a Sudoku problem in 3 steps.
 
 # running the script
 
-The script reads from text files that are 9 lines of 9 numbers each. Blank spaces are represented as question marks. The script can easily be run in the commandline:
+The script reads from text files that are 9 lines of 9 numbers each. Blank spaces are represented as zeros. The script can easily be run in the commandline:
 
     ruby sudoku.rb
   
